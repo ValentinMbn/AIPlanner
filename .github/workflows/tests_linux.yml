@@ -1,0 +1,91 @@
+name: Linux
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+env:
+  clang_compiler_version: -${{ matrix.clang_version }}
+
+jobs:
+    Clang:
+        name: Ubuntu | Clang
+        runs-on: ubuntu-latest
+        # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+        # You can convert this to a matrix build if you need cross-platform coverage.
+        # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+
+        strategy:
+            fail-fast: false
+            matrix:
+                build_config: [Release, Debug]
+                clang_version: [9, 10, 11, 12, 13, 14]
+                cpp_version: [14, 17, 20]
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+          with:
+            submodules: 'recursive'
+
+        - name: Install suitable compiler
+          run: sudo apt-get install clang++-${{ matrix.clang_version }}
+
+        - name: Install ninja
+          uses: seanmiddleditch/gha-setup-ninja@master
+
+        - name: Install CMake
+          uses: jwlawson/actions-setup-cmake@v1.8
+          with:
+              cmake-version: '3.21.0'
+          
+        - name: Generate Project
+          run: |
+            cmake --list-presets=all
+            cmake --preset="Clang" -DCRK_MIN_CXX_STD_VERSION=${{ matrix.cpp_version }} -DCRK_DEV=1
+
+        - name: Build AIPlanner
+          run: cmake --build --preset="Clang ${{ matrix.build_config }}"
+
+        - name: Run Tests
+          run: ctest --preset="Clang ${{ matrix.build_config }}"
+
+    GCC:
+        name: Ubuntu | GCC
+        runs-on: ubuntu-latest
+        # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+        # You can convert this to a matrix build if you need cross-platform coverage.
+        # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+
+        strategy:
+            fail-fast: false
+            matrix:
+                build_config: [Release, Debug]
+                clang_version: [9, 10, 11, 12]
+                cpp_version: [14, 17, 20]
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+          with:
+            submodules: 'recursive'
+
+        - name: Install suitable compiler
+          run: sudo apt-get install g++-${{ matrix.clang_version }}
+
+        - name: Install ninja
+          uses: seanmiddleditch/gha-setup-ninja@master
+
+        - name: Install CMake
+          uses: jwlawson/actions-setup-cmake@v1.8
+          with:
+              cmake-version: '3.21.0'
+          
+        - name: Generate Project
+          run: |
+            cmake --list-presets=all
+            cmake --preset="GCC" -DCRK_MIN_CXX_STD_VERSION=${{ matrix.cpp_version }} -DCRK_DEV=1
+
+        - name: Build AIPlanner
+          run: cmake --build --preset="GCC ${{ matrix.build_config }}"
+
+        - name: Run Tests
+          run: ctest --preset="GCC ${{ matrix.build_config }}"
