@@ -20,10 +20,10 @@ jobs:
               with:
                 doxyfile-path: "./Docs/Doxyfile"
 
-      - name: Deploy Documentation
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./html
-          allow_empty_commit: true
-          full_commit_message: "Deploy ${{ steps.version.outputs.VERSION }} Documentation"
+            - name: Deploy Documentation
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                publish_dir: ./html
+                allow_empty_commit: true
+                full_commit_message: "Deploy ${{ steps.version.outputs.VERSION }} Documentation"
