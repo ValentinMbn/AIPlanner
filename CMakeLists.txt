@@ -3,6 +3,8 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-project ("AIPlannerAPI")
+project (AIPlanner)
+
+include(CTest)
 
 add_subdirectory(AIPlannerAPI)
