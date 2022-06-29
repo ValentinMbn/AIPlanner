@@ -1,0 +1,29 @@
+name: Documentation
+
+on:
+    push:
+        branches: ["main", "develop"]
+
+  workflow_dispatch:
+
+jobs:
+    docs-gen:
+        name: Doxygen
+        runs-on: ubuntu-latest
+    
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Run Doxygen
+              uses: mattnotmitt/doxygen-action@v1.1.0
+              with:
+                doxyfile-path: "./Docs/Doxyfile"
+
+      - name: Deploy Documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html
+          allow_empty_commit: true
+          full_commit_message: "Deploy ${{ steps.version.outputs.VERSION }} Documentation"

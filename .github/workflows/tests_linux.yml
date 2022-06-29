@@ -1,8 +1,10 @@
 name: Linux
 
 on:
-  push:
-    branches: [ "main", "develop" ]
+    push:
+        branches: [ "main", "develop" ]
+
+    workflow_dispatch:
 
 jobs:
     Clang:
