@@ -4,8 +4,7 @@ on:
   push:
     branches: [ "main", "develop" ]
 
-env:
-  clang_compiler_version: -${{ matrix.clang_version }}
+
 
 jobs:
     Clang:
@@ -21,6 +20,10 @@ jobs:
                 build_config: [Release, Debug]
                 clang_version: [9, 10, 11, 12, 13, 14]
                 cpp_version: [14, 17, 20]
+
+        env:
+            clang_compiler_version: -${{ matrix.clang_version }}
+
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v3
@@ -60,8 +63,12 @@ jobs:
             fail-fast: false
             matrix:
                 build_config: [Release, Debug]
-                clang_version: [9, 10, 11, 12]
+                gcc_version: [9, 10, 11, 12]
                 cpp_version: [14, 17, 20]
+
+        env:
+            clang_compiler_version: -${{ matrix.gcc_version }}
+
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v3
@@ -69,7 +76,7 @@ jobs:
             submodules: 'recursive'
 
         - name: Install suitable compiler
-          run: sudo apt-get install g++-${{ matrix.clang_version }}
+          run: sudo apt-get install g++-${{ matrix.gcc_version }}
 
         - name: Install ninja
           uses: seanmiddleditch/gha-setup-ninja@master
