@@ -4,11 +4,9 @@ on:
   push:
     branches: [ "main", "develop" ]
 
-
-
 jobs:
     Clang:
-        name: Ubuntu | Clang
+        name: Clang
         runs-on: ubuntu-latest
         # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
         # You can convert this to a matrix build if you need cross-platform coverage.
@@ -18,7 +16,7 @@ jobs:
             fail-fast: false
             matrix:
                 build_config: [Release, Debug]
-                clang_version: [9, 10, 11, 12, 13, 14]
+                clang_version: [9, 10, 11, 12]
                 cpp_version: [14, 17, 20]
 
         env:
@@ -53,7 +51,7 @@ jobs:
           run: ctest --preset="Clang ${{ matrix.build_config }}"
 
     GCC:
-        name: Ubuntu | GCC
+        name: GCC
         runs-on: ubuntu-latest
         # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
         # You can convert this to a matrix build if you need cross-platform coverage.
