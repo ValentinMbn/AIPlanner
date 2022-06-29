@@ -1,0 +1,32 @@
+name: Windows
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+jobs:
+    MSVC:
+        name: VS_19 | MSVC
+        runs-on: windows-2019
+
+        strategy:
+            fail-fast: false
+            matrix:
+                build_config: [Release, Debug]
+                target_architecture: [x64, x86]
+                cpp_version: [14, 17, 20]
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+          with:
+            submodules: 'recursive'
+
+        - name: Generate Project
+          run: cmake --preset="MSVC" -A ${{ matrix.target_architecture }} -DCRK_MIN_CXX_STD_VERSION=${{matrix.cpp_version}} -DCRK_DEV=1
+
+        - name: Build AIPlanner
+          run: cmake --build --preset="MSVC ${{ matrix.build_config }}"
+
+        - name: Run Tests
+          run: ctest --preset="MSVC ${{ matrix.build_config }}"
