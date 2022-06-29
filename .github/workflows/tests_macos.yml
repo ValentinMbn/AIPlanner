@@ -1,0 +1,39 @@
+name: MacOS
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+jobs:
+    Clang:
+        name: MacOS | Clang
+        runs-on: macos-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                build_config: [Release, Debug]
+                cpp_version: [14, 17, 20]
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v3
+            with:
+              submodules: 'recursive'
+
+          - name: Install ninja
+            uses: seanmiddleditch/gha-setup-ninja@master
+
+          - name: Install CMake
+            uses: jwlawson/actions-setup-cmake@v1.8
+            with:
+              cmake-version: '3.21.0'
+
+          - name: Generate Project
+            run: cmake --preset="Clang" -DCRK_MIN_CXX_STD_VERSION=${{matrix.cpp_version}} -DCRK_DEV=1
+
+          - name: Build AIPlanner
+            run: cmake --build --preset="Clang ${{ matrix.build_config }}"
+
+          - name: Run Tests
+            run: ctest --preset="Clang ${{ matrix.build_config }}"
