@@ -64,7 +64,7 @@ jobs:
             matrix:
                 build_config: [Release, Debug]
                 gcc_version: [9, 10, 11, 12]
-                cpp_version: [14, 17, 20]
+                cpp_version: [17, 20]
 
         env:
             clang_compiler_version: -${{ matrix.gcc_version }}
